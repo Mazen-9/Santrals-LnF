@@ -20,12 +20,9 @@ async function fetchData() {
     }
 }
 // Function to render the staff list
-//testing
 async function renderStaffList() {
     const staffContainer = document.getElementById("requestsContainer");
     const requestList = document.getElementById("requestList");
-    const test = 0;
-
 
     requestList.innerHTML = "";
 
