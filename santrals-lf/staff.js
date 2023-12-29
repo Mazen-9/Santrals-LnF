@@ -24,6 +24,7 @@ async function fetchData() {
 async function renderStaffList() {
     const staffContainer = document.getElementById("requestsContainer");
     const requestList = document.getElementById("requestList");
+    const test = 0;
 
 
     requestList.innerHTML = "";
