@@ -44,11 +44,34 @@ app.use((req, res, next) => {
 
 
 // checks authentication before redirecting
-function isAuthenticated(req, res, next) {
-  if (req.session && req.session.loggedin === true) {
+function isAuthenticatedStaff(req, res, next) {
+  if (req.session && req.session.loggedin === true && req.session.role === 'Staff') {
     return next();
   }
-  res.redirect('/pro.html'); // Redirect to login page if not authenticated
+  req.session.destroy(function(err) {
+    if(err) {
+    console.error('Error destroying session:', err);
+    res.status(500).send('Internal Server Error');
+  } else {
+    console.log('logging out...', req.session);
+    res.redirect('/pro.html');
+  }
+});
+}
+
+function isAuthenticatedUser(req, res, next) {
+  if (req.session && req.session.loggedin === true && req.session.role === 'User') {
+    return next();
+  }
+  req.session.destroy(function(err) {
+    if(err) {
+    console.error('Error destroying session:', err);
+    res.status(500).send('Internal Server Error');
+  } else {
+    console.log('logging out...', req.session);
+    res.redirect('/pro.html');
+  }
+});
 }
 
 
@@ -71,37 +94,37 @@ app.get('/prostaff.html', function(request, response) {
   response.sendFile(path.join(__dirname + '/santrals-lf/prostaff.html'));
 });
 
-app.get('/santrals-lf/user.html', isAuthenticated, (req, res) => {
+app.get('/santrals-lf/user.html', isAuthenticatedUser, (req, res) => {
   res.sendFile(path.join(__dirname + '/santrals-lf/user.html'));
 });
 
-app.get('/santrals-lf/staff.html', isAuthenticated, (req, res) => {
+app.get('/santrals-lf/staff.html', isAuthenticatedStaff, (req, res) => {
   res.sendFile(path.join(__dirname + '/santrals-lf/staff.html'));
 });
 
-app.get('/santrals-lf/myrequests.html', function(request, response) {
+app.get('/santrals-lf/myrequests.html', isAuthenticatedUser, function(request, response) {
 	response.sendFile(path.join(__dirname + '/santrals-lf/myrequests.html'));
 });
-app.get('/santrals-lf/L&FOfficeUser.html', function(request, response) {
+app.get('/santrals-lf/L&FOfficeUser.html', isAuthenticatedUser, function(request, response) {
 	response.sendFile(path.join(__dirname + '/santrals-lf/L&FOffice.html'));
 });
 
-app.get('/santrals-lf/Itemsfound.html', function(request, response) {
+app.get('/santrals-lf/Itemsfound.html', isAuthenticatedStaff, function(request, response) {
   console.log(request.session);
 	response.sendFile(path.join(__dirname + '/santrals-lf/Itemsfound.html'));
 });
 
-app.get('/santrals-lf/L&FOfficeStaff.html', function(request, response) {
+app.get('/santrals-lf/L&FOfficeStaff.html', isAuthenticatedStaff, function(request, response) {
   console.log(request.session);
 	response.sendFile(path.join(__dirname + '/santrals-lf/L&FOfficeStaff.html'));
 });
 
-app.get('/santrals-lf/user_chat.html', function(request, response) {
+app.get('/santrals-lf/user_chat.html', isAuthenticatedUser, function(request, response) {
   console.log(request.session);
 	response.sendFile(path.join(__dirname + '/santrals-lf/user_chat.html'));
 });
 
-app.get('/santrals-lf/staff_chat.html', function(request, response) {
+app.get('/santrals-lf/staff_chat.html', isAuthenticatedStaff, function(request, response) {
   console.log(request.session);
 	response.sendFile(path.join(__dirname + '/santrals-lf/staff_chat.html'));
 });
@@ -149,7 +172,7 @@ app.get('/style1.css', function(_, res) {
   res.sendFile(path.join(__dirname + '/santrals-lf/style1.css'));
 });
 
-// adding js files //////////////// REMEMBER TO ADD ONE FOR THE STAFF PAGE AFTER IT'S FINALIZED
+// adding js files
 app.get('/santrals-lf/user.js',   function(_, res) {
   res.sendFile(path.join(__dirname + '/santrals-lf/user.js'));
 });
@@ -164,7 +187,7 @@ app.get('/santrals-lf/staff.js', function(_, res) {
 });
 
 // more get operations
-app.get('/staff.html', function(request, response) {
+app.get('/staff.html', isAuthenticatedStaff, function(request, response) {
   //added item desc and userid heeereyah
   pool.query('SELECT user_id, itemID, item_name, category, date_lost, item_status, item_description, last_loc, image_path, date_added FROM items', function(error, results, fields) {
           if (error) {
@@ -190,7 +213,7 @@ app.get('/staff.html', function(request, response) {
 
 }); 
 
-app.get('/user.html', function(req, res) {
+app.get('/user.html', isAuthenticatedUser, function(req, res) {
   pool.query('SELECT user_id, itemID, item_name, category, date_lost, item_status, item_description, last_loc, image_path FROM items', function(error, results, fields) {
           if (error) {
               console.error('Error fetching missing items: ', error);
@@ -212,7 +235,7 @@ app.get('/user.html', function(req, res) {
 
 });
 
-app.get('/myrequests.html', function(request, response) {
+app.get('/myrequests.html', isAuthenticatedUser, function(request, response) {
         
   pool.query('SELECT * FROM items', function(error, results, fields) {
           if (error) {
@@ -243,7 +266,7 @@ app.get('/myrequests.html', function(request, response) {
 
 });   
 
-app.get('/itemsfound.html', function(request, response) {
+app.get('/itemsfound.html', isAuthenticatedStaff, function(request, response) {
   
   pool.query('SELECT user_id, itemID, item_name, category, date_lost, item_status, item_description, last_loc, image_path, date_added FROM items', function(error, results, fields) {
           if (error) {
