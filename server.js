@@ -43,6 +43,14 @@ app.use((req, res, next) => {
 });
 
 
+// checks authentication before redirecting
+function isAuthenticated(req, res, next) {
+  if (req.session && req.session.loggedin === true) {
+    return next();
+  }
+  res.redirect('/pro.html'); // Redirect to login page if not authenticated
+}
+
 
 // get methods
 app.get('/', function(req, res) {
@@ -63,12 +71,12 @@ app.get('/prostaff.html', function(request, response) {
   response.sendFile(path.join(__dirname + '/santrals-lf/prostaff.html'));
 });
 
-app.get('/santrals-lf/user.html', function(request, response) {
-	response.sendFile(path.join(__dirname + '/santrals-lf/user.html'));
+app.get('/santrals-lf/user.html', isAuthenticated, (req, res) => {
+  res.sendFile(path.join(__dirname + '/santrals-lf/user.html'));
 });
 
-app.get('/santrals-lf/staff.html', function(request, response) {
-	response.sendFile(path.join(__dirname + '/santrals-lf/staff.html'));
+app.get('/santrals-lf/staff.html', isAuthenticated, (req, res) => {
+  res.sendFile(path.join(__dirname + '/santrals-lf/staff.html'));
 });
 
 app.get('/santrals-lf/myrequests.html', function(request, response) {
@@ -380,7 +388,7 @@ app.post('/signin', function(req, res){
             req.session.userID = results[0].userID;
             req.session.role = results[0].role;                 
             console.log('this is the staff session information: ', req.session);     
-            res.redirect('./santrals-lf/staff.html');
+            res.redirect('/santrals-lf/staff.html');
                   } else {
                       res.send('Incorrect Email and/or Password!');
                   }
@@ -394,7 +402,7 @@ app.post('/signin', function(req, res){
             req.session.userID = results[0].userID;
             req.session.role = results[0].role;    
             console.log('this is the user session information: ', req.session);
-            res.redirect('./santrals-lf/user.html');
+            res.redirect('/santrals-lf/user.html');
                   } else {
                       res.send('Incorrect Email and/or Password!');
                   }
@@ -472,9 +480,9 @@ console.log('this is the session email for item report: ', req.session.email, ' 
         // i don't think redirection is recommended here but this is temporary
         // double check this
         if(req.session.role === 'User'){
-          res.redirect('./santrals-lf/user.html');
+          res.redirect('/santrals-lf/user.html');
         }
-        else res.redirect('./santrals-lf/staff.html');
+        else res.redirect('/santrals-lf/staff.html');
 
     } else {
         console.error('Error inserting record. No rows affected.');
@@ -622,8 +630,8 @@ if (enteredDate < max) {
         console.log('Record inserted successfully');
         // i don't think redirection is recommended here but this is temporary
         if(req.session.role ==='User'){
-          res.redirect('./santrals-lf/user.html');
-        } else res.redirect('./santrals-lf/staff.html');
+          res.redirect('/santrals-lf/user.html');
+        } else res.redirect('/santrals-lf/staff.html');
 
     } else {
         console.error('Error inserting record. No rows affected.');
