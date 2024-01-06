@@ -383,6 +383,24 @@ document.getElementById('addRequestBtn').addEventListener('click', function () {
 
 
 document.getElementById('submitRequestBtn').addEventListener('click', function () {
+    const currentDate = new Date();
+    const formattedDate = currentDate.toISOString().split('T')[0];
+
+    // Create a hidden input element
+    const hiddenInput = document.createElement('input');
+    hiddenInput.type = 'hidden';
+    hiddenInput.name = 'date_added';
+    hiddenInput.value = formattedDate;
+
+    // Append the hidden input to the form
+    document.getElementById('staffReportForm').appendChild(hiddenInput);
+
+    // Submit the form
+    document.getElementById('staffReportForm').submit();
+});
+
+    
+/*document.getElementById('submitRequestBtn').addEventListener('click', function () {
     // Retrieve input values
     var itemName = document.getElementById('itemName').value.trim();
     var category = document.getElementById('category').value.trim();
@@ -415,7 +433,7 @@ document.getElementById('submitRequestBtn').addEventListener('click', function (
     } else {
         alert('Please fill in all required fields.');
     }
-});
+});*/
 
 renderStaffList();
 // Update the event listener in requestsContainer to handle the "Status" button and modal

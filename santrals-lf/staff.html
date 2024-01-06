@@ -104,13 +104,14 @@
                 <div class="modal-body">
                     <!-- Form inputs for the new request -->
                     <div class="mb-3">
+                        <form action="/itemreport" id="staffReportForm" method="post" enctype="multipart/form-data">
                         <label for="itemName">Item Name</label>
-                        <input type="text" class="form-control" id="itemName" required
+                        <input type="text" class="form-control" id="itemName" name="itemName" required
                             onkeydown="moveToNextInput(event, 'category')">
                     </div>
                     <div class="mb-3">
                         <label for="category">Category</label>
-                        <select class="form-select" id="category" required
+                        <select class="form-select" id="category" name="category" required
                             onkeydown="moveToNextInput(event, 'lastLocation')">
                             <option value="" disabled selected>Select a category:</option>
                             <option value="Personal Items">Personal Items</option>
@@ -128,7 +129,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="lastLocation">Select Location</label>
-                        <select class="form-select" id="lastLocation" required
+                        <select class="form-select" id="lastLocation" name="lastLocation" required
                             onkeydown="moveToNextInput(event, 'dateLost')">
                             <option value="" disabled selected>Select a location:</option>
                             <option value="E1">E1</option>
@@ -159,21 +160,22 @@
                     </div>
                     <div class="mb-3">
                         <label for="dateLost">Date Lost</label>
-                        <input type="date" class="form-control" id="dateLost" required
+                        <input type="date" class="form-control" id="dateLost" name="dateLost" required
                             onkeydown="moveToNextInput(event, 'itemDescription')">
                     </div>
                     <div class="mb-3">
                         <label for="itemDescription">Item Description</label>
-                        <textarea class="form-control" id="itemDescription" rows="3" required></textarea>
+                        <textarea class="form-control" id="itemDescription" name="itemDescription" rows="3" required></textarea>
                     </div>
                     <div class="mb-3">
                         <label for="image">Add a Picture (Optional)</label>
-                        <input type="file" class="form-control" id="image" accept="image/*">
+                        <input type="file" class="form-control" id="image" name="image" accept="image/*">
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary custom-btn1" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary custom-btn1" id="submitRequestBtn">OK</button>
+                    <button type="submit" class="btn btn-primary custom-btn1" id="submitRequestBtn">OK</button>
+                </form>
                 </div>
             </div>
         </div>
