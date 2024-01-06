@@ -30,6 +30,11 @@ app.use(session({
 
 
 app.use((req, res, next) => {
+
+  res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+  res.header('Expires', '-1');
+  res.header('Pragma', 'no-cache');
+
   if (req.session && req.session.cookie && req.session.cookie.expires < Date.now()) {
       req.session.destroy((err) => {
           if (err) {
