@@ -226,10 +226,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 //new shi
 const darkModeCookie = document.cookie.split('; ').find(row => row.startsWith('darkMode='));
-if (darkModeCookie) {
-    const isDarkMode = darkModeCookie.split('=')[1] === 'true';
-    document.body.classList.toggle("dark-theme", isDarkMode);
-}
+    if (darkModeCookie) {
+        const isDarkMode = darkModeCookie.split('=')[1] === 'true';
+        document.body.style.display = 'block'; // Display the content once the dark mode preference is retrieved
+        document.body.classList.toggle('dark-theme', isDarkMode); // Apply the dark mode
+    } else {
+        document.body.style.display = 'block'; // Display content even if the dark mode preference is not found
+    }
 
 var darkmode = document.getElementById("darkModeBtn");
     if (darkmode) {

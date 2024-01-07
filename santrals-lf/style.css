@@ -173,6 +173,8 @@ a {
 body {
     background-color: var(--primary-color);
     transition: background-color var(--transition-speed);
+    display: none;
+    
 }
 .dark-theme {
     --primary-color: rgb(93, 91, 91);
@@ -221,6 +223,32 @@ transition: 0.3s;
         font-size: 20px; /* Increase font size for readability */
     }
 
+    #campusimg {
+        display: block;
+        margin: auto;
+        height: 300px;
+        width: 100%; /* Adjust the width as needed */
+
+        
+    }
+
+    .cont-office {
+        text-align: center;
+    }
+
+    .image-caption {
+        text-align: center;
+        font-size: 14px;
+        margin-top: 20px;
+        width: 95%; /* Adjust the width as needed */
+        margin-left: auto;
+        margin-right: auto;
+        clear: both; /* Ensure text clears the float of the image */
+        display: block; /* Ensure it's a block-level element */
+    }
+    
+
+    
     /* Resize person-circle icon for smaller screens */
     .bi-person-circle {
         font-size: 28px; /* Larger size for visibility */
@@ -424,20 +452,7 @@ transition: 0.3s;
     color: #fff;
     /* Additional styles */
 }
-#campusimg{
-    height: 400px;
-    width: 70%;
-   
-}
-/* Add this in your existing style.css file or within <style> tags in <head> */
-.image-with-text {
-    display: flex;
-    align-items: center;
-}
 
-.image-caption {
-    margin-left: 10px; /* Adjust this value to add space between the image and text */
-}
 #officdirection{
     color: #0a0a0a;
 }
@@ -447,4 +462,28 @@ transition: 0.3s;
 /* Add this to your existing style.css or within <style> tags in <head> */
 .image-caption a {
     color: var(--email-color); /* Adjust the color to your preference */
+}
+
+#campusimg {
+    display: block;
+    margin: auto;
+    height: 380px;
+    width: 100%; /* Adjust the width as needed */
+
+    
+}
+
+.cont-office {
+    text-align: auto;
+}
+
+.image-caption {
+    text-align: center;
+    font-size: 14px;
+    margin-top: 20px;
+    width: 95%; /* Adjust the width as needed */
+    margin-left: auto;
+    margin-right: auto;
+    clear: both; /* Ensure text clears the float of the image */
+    display: block; /* Ensure it's a block-level element */
 }
