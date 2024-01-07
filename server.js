@@ -48,6 +48,16 @@ app.use((req, res, next) => {
 });
 
 
+app.get('/profile', function (req, res) {
+  // Assuming you have user information stored in the session
+  const userFirstName = req.session.first_name || '';
+  const userID = req.session.userID || '';
+
+  // Send user information as JSON
+  res.json({ userFirstName, userID });
+});
+
+
 // checks authentication before redirecting
 function isAuthenticatedStaff(req, res, next) {
   if (req.session && req.session.loggedin === true && req.session.role === 'Staff') {
@@ -436,6 +446,9 @@ app.post('/signin', function(req, res){
                   }
         } else{
           res.send('Please input your information in the correct fields');
+          // this can be used with the commented code in the beginning of the script in pro.html to display the error as a popup
+          //res.redirect('/pro.html?error=Please+input+your+information+in+the+correct+fields');
+
         }
                     
       } else {
@@ -601,7 +614,7 @@ app.post('/updateStatus', function (req, res) {
 app.post('/itemreport', upload.single('image'), function(req, res){
   console.log('Received request:', req.body);
 
-  if (req.session.loggedin /*&& req.session.role === 'User' for now ill leave this here for as long as its logged in it works*/){
+  if (req.session.loggedin){
   console.log('this is the session', req.session);
   console.log('this is the request: ', req.body);
   const itemName = req.body.itemName || req.body.item_name;
@@ -670,7 +683,7 @@ if (enteredDate < max) {
   
   console.log(itemName, category, lastLocation, dateLost, itemDescription);       
 
-} else{ res.send("Error");}} ) ;
+} else{ res.send("Session timeout, please login again");}} ) ;
 
  // functions
  function countWords(text) {

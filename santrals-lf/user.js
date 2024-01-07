@@ -340,3 +340,21 @@ function logout(){
     $('body').append(form);
     form.submit().remove()
   }
+
+  // inserting the session information into the modal
+  $(document).ready(function() {
+    // Make an AJAX request to fetch user information
+    $.ajax({
+      url: '/profile',
+      method: 'GET',
+      dataType: 'json',
+      success: function(data) {
+        // Update the content of the modal with the fetched user information
+        $('#userFirstName').text(data.userFirstName);
+        $('#userID').text(data.userID);
+      },
+      error: function(error) {
+        console.error('Error fetching user information:', error);
+      }
+    });
+  });
