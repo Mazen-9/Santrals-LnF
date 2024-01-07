@@ -208,6 +208,7 @@ document.addEventListener("DOMContentLoaded", function () {
         renderRequestList(items); // Render the sorted items
         sortedItemList = items.slice(); // Update the sorted items after sorting
     }
+    const settingsForm = document.getElementById('settingsForm');
 
     // Retrieve user information from local storage
     const storedEmail = localStorage.getItem('userEmail');
@@ -223,21 +224,34 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById('settingsPhoneNumber').value = storedPhoneNumber || '';
     document.getElementById('settingsPassword').value = storedpass || '';
 
-    const settingsForm = document.getElementById('settingsForm');
+
+    const newPhoneNumberField = document.getElementById('settingsPhoneNumber');
+    newPhoneNumberField.addEventListener('input', function (event) {
+        // Get the entered value and remove any non-numeric characters
+        var enteredValue = event.target.value;
+        var numericValue = enteredValue.replace(/\D/g, '');
+
+        // Update the input value with the cleaned numeric value
+        event.target.value = numericValue;
+    });
+
+
     settingsForm.addEventListener('submit', function (event) {
         event.preventDefault();
 
         // Retrieve values from the settings form
         const newEmail = document.getElementById('settingsEmail').value.trim();
-        const newPhoneNumber = document.getElementById('settingsPhoneNumber').value.trim();
+        const newPhoneNumber = newPhoneNumberField.value.trim();
         const newPassword = document.getElementById('settingsPassword').value.trim();
         const confirmPassword = document.getElementById('settingsConfirmPassword').value.trim();
         let finalPassword = localStorage.getItem('userPassword');
 
-        if (newEmail.length < 10 || newEmail.length > 320) {
-            alert('Email should be between 10 and 320 characters');
-            return;
-        }
+
+
+        // if (newEmail.length < 10 || newEmail.length > 320) {
+        //     alert('Email should be between 10 and 320 characters');
+        //     return;
+        // }
 
         // Validate phone numbers
         if (newPhoneNumber.length !== 10) {
