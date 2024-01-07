@@ -30,6 +30,11 @@ app.use(session({
 
 
 app.use((req, res, next) => {
+
+  res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+  res.header('Expires', '-1');
+  res.header('Pragma', 'no-cache');
+
   if (req.session && req.session.cookie && req.session.cookie.expires < Date.now()) {
       req.session.destroy((err) => {
           if (err) {
@@ -43,6 +48,47 @@ app.use((req, res, next) => {
 });
 
 
+app.get('/profile', function (req, res) {
+  // Assuming you have user information stored in the session
+  const userFirstName = req.session.first_name || '';
+  const userID = req.session.userID || '';
+
+  // Send user information as JSON
+  res.json({ userFirstName, userID });
+});
+
+
+// checks authentication before redirecting
+function isAuthenticatedStaff(req, res, next) {
+  if (req.session && req.session.loggedin === true && req.session.role === 'Staff') {
+    return next();
+  }
+  req.session.destroy(function(err) {
+    if(err) {
+    console.error('Error destroying session:', err);
+    res.status(500).send('Internal Server Error');
+  } else {
+    console.log('logging out...', req.session);
+    res.redirect('/pro.html');
+  }
+});
+}
+
+function isAuthenticatedUser(req, res, next) {
+  if (req.session && req.session.loggedin === true && req.session.role === 'User') {
+    return next();
+  }
+  req.session.destroy(function(err) {
+    if(err) {
+    console.error('Error destroying session:', err);
+    res.status(500).send('Internal Server Error');
+  } else {
+    console.log('logging out...', req.session);
+    res.redirect('/pro.html');
+  }
+});
+}
+
 
 // get methods
 app.get('/', function(req, res) {
@@ -50,8 +96,8 @@ app.get('/', function(req, res) {
     res.redirect('/pro.html');}
     else{
       if(req.session.role === 'User'){
-        res.sendFile(path.join(__dirname + '/santrals-lf/user.html'));}
-        else res.sendFile(path.join(__dirname + '/santrals-lf/staff.html'));
+        res.redirect('/santrals-lf/user.html');}
+        else res.redirect('/santrals-lf/staff.html');
       }
 });
 
@@ -63,37 +109,37 @@ app.get('/prostaff.html', function(request, response) {
   response.sendFile(path.join(__dirname + '/santrals-lf/prostaff.html'));
 });
 
-app.get('/santrals-lf/user.html', function(request, response) {
-	response.sendFile(path.join(__dirname + '/santrals-lf/user.html'));
+app.get('/santrals-lf/user.html', isAuthenticatedUser, (req, res) => {
+  res.sendFile(path.join(__dirname + '/santrals-lf/user.html'));
 });
 
-app.get('/santrals-lf/staff.html', function(request, response) {
-	response.sendFile(path.join(__dirname + '/santrals-lf/staff.html'));
+app.get('/santrals-lf/staff.html', isAuthenticatedStaff, (req, res) => {
+  res.sendFile(path.join(__dirname + '/santrals-lf/staff.html'));
 });
 
-app.get('/santrals-lf/myrequests.html', function(request, response) {
+app.get('/santrals-lf/myrequests.html', isAuthenticatedUser, function(request, response) {
 	response.sendFile(path.join(__dirname + '/santrals-lf/myrequests.html'));
 });
-app.get('/santrals-lf/L&FOfficeUser.html', function(request, response) {
+app.get('/santrals-lf/L&FOfficeUser.html', isAuthenticatedUser, function(request, response) {
 	response.sendFile(path.join(__dirname + '/santrals-lf/L&FOffice.html'));
 });
 
-app.get('/santrals-lf/Itemsfound.html', function(request, response) {
+app.get('/santrals-lf/Itemsfound.html', isAuthenticatedStaff, function(request, response) {
   console.log(request.session);
 	response.sendFile(path.join(__dirname + '/santrals-lf/Itemsfound.html'));
 });
 
-app.get('/santrals-lf/L&FOfficeStaff.html', function(request, response) {
+app.get('/santrals-lf/L&FOfficeStaff.html', isAuthenticatedStaff, function(request, response) {
   console.log(request.session);
 	response.sendFile(path.join(__dirname + '/santrals-lf/L&FOfficeStaff.html'));
 });
 
-app.get('/santrals-lf/user_chat.html', function(request, response) {
+app.get('/santrals-lf/user_chat.html', isAuthenticatedUser, function(request, response) {
   console.log(request.session);
 	response.sendFile(path.join(__dirname + '/santrals-lf/user_chat.html'));
 });
 
-app.get('/santrals-lf/staff_chat.html', function(request, response) {
+app.get('/santrals-lf/staff_chat.html', isAuthenticatedStaff, function(request, response) {
   console.log(request.session);
 	response.sendFile(path.join(__dirname + '/santrals-lf/staff_chat.html'));
 });
@@ -141,8 +187,8 @@ app.get('/style1.css', function(_, res) {
   res.sendFile(path.join(__dirname + '/santrals-lf/style1.css'));
 });
 
-// adding js files //////////////// REMEMBER TO ADD ONE FOR THE STAFF PAGE AFTER IT'S FINALIZED
-app.get('/santrals-lf/user.js',   function(_, res) {
+// adding js files
+app.get('/santrals-lf/user.js', function(_, res) {
   res.sendFile(path.join(__dirname + '/santrals-lf/user.js'));
 });
 app.get('/santrals-lf/myrequests.js', function(_, res) {
@@ -380,7 +426,7 @@ app.post('/signin', function(req, res){
             req.session.userID = results[0].userID;
             req.session.role = results[0].role;                 
             console.log('this is the staff session information: ', req.session);     
-            res.redirect('./santrals-lf/staff.html');
+            res.redirect('/santrals-lf/staff.html');
                   } else {
                       res.send('Incorrect Email and/or Password!');
                   }
@@ -394,12 +440,15 @@ app.post('/signin', function(req, res){
             req.session.userID = results[0].userID;
             req.session.role = results[0].role;    
             console.log('this is the user session information: ', req.session);
-            res.redirect('./santrals-lf/user.html');
+            res.redirect('/santrals-lf/user.html');
                   } else {
                       res.send('Incorrect Email and/or Password!');
                   }
         } else{
           res.send('Please input your information in the correct fields');
+          // this can be used with the commented code in the beginning of the script in pro.html to display the error as a popup
+          //res.redirect('/pro.html?error=Please+input+your+information+in+the+correct+fields');
+
         }
                     
       } else {
@@ -472,9 +521,9 @@ console.log('this is the session email for item report: ', req.session.email, ' 
         // i don't think redirection is recommended here but this is temporary
         // double check this
         if(req.session.role === 'User'){
-          res.redirect('./santrals-lf/user.html');
+          res.redirect('/santrals-lf/user.html');
         }
-        else res.redirect('./santrals-lf/staff.html');
+        else res.redirect('/santrals-lf/staff.html');
 
     } else {
         console.error('Error inserting record. No rows affected.');
@@ -565,7 +614,7 @@ app.post('/updateStatus', function (req, res) {
 app.post('/itemreport', upload.single('image'), function(req, res){
   console.log('Received request:', req.body);
 
-  if (req.session.loggedin /*&& req.session.role === 'User' for now ill leave this here for as long as its logged in it works*/){
+  if (req.session.loggedin){
   console.log('this is the session', req.session);
   console.log('this is the request: ', req.body);
   const itemName = req.body.itemName || req.body.item_name;
@@ -622,8 +671,8 @@ if (enteredDate < max) {
         console.log('Record inserted successfully');
         // i don't think redirection is recommended here but this is temporary
         if(req.session.role ==='User'){
-          res.redirect('./santrals-lf/user.html');
-        } else res.redirect('./santrals-lf/staff.html');
+          res.redirect('/santrals-lf/user.html');
+        } else res.redirect('/santrals-lf/staff.html');
 
     } else {
         console.error('Error inserting record. No rows affected.');
@@ -634,7 +683,7 @@ if (enteredDate < max) {
   
   console.log(itemName, category, lastLocation, dateLost, itemDescription);       
 
-} else{ res.send("Error");}} ) ;
+} else{ res.send("Session timeout, please login again");}} ) ;
 
  // functions
  function countWords(text) {
