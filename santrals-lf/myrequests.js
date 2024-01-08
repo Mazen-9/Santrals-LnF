@@ -8,7 +8,6 @@ async function displayMyItems(){
             const items = await response.json();
 
         items.forEach(item => {
-           console.log(item);
             const formattedDate = new Date(item.date_lost).toLocaleDateString('en-CA');
 
             const itemId = item.itemID || 'Not Available';
@@ -24,9 +23,6 @@ async function displayMyItems(){
             const foundLoc = item.found_loc || 'Not Available';
 
                 var currentDate = new Date();
-                //var image = imageInput.files.length > 0 ? imageInput.files[0] : null;
-              //  imageUrl = image ? URL.createObjectURL(image) : null;
-              var imageUrl;
                 var newItem = document.createElement("li");
                 newItem.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-start");
                 newItem.innerHTML = `
@@ -94,8 +90,6 @@ document.addEventListener("DOMContentLoaded", function () {
     var requestList = document.getElementById('requestList');
     var sortByDateLost = document.getElementById('sortByDateLost');
     var sortByDateFound = document.getElementById('sortByDateFound');
-
-    var imageUrl;
     var originalItemList = Array.from(requestList.children);
 
     function renderRequestList(items) {
@@ -123,12 +117,6 @@ document.addEventListener("DOMContentLoaded", function () {
     
             var imageTag = imageUrl ? `<img src="${imageUrl}" alt="Item Image" class="img-fluid">` : '<p>No image available</p>';
 
-            
-            console.log("Item ID:", item_id);
-            console.log('Last Location:', lastLocation);
-            console.log('Date Lost:', dateLost);
-            console.log('Item Description:', itemDescription);
-            
             document.getElementById('detailsImageContainer').innerHTML = imageTag;
             document.getElementById('viewDetailsItemId').textContent = `Item ID: ${item_id}`;
             document.getElementById('viewDetailsLastLocation').textContent = `Last Location: ${lastLocation}`;
@@ -146,7 +134,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     requestList.addEventListener('click', function (event) {
         if (event.target.classList.contains('view-status-btn')) {
-            console.log(event.target.dataset);
             const itemId = event.target.dataset.itemId;
             const itemStatus = event.target.dataset.itemStatus;
             const returnStatus = event.target.dataset.returnStatus;
@@ -213,25 +200,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
-/*
-document.addEventListener("DOMContentLoaded", function () {
-    var darkmode = document.getElementById("darkModeBtn");
-    if (darkmode) {
-        darkmode.onclick = function() {
-            document.body.classList.toggle("dark-theme");
-        };
-    }
-});
-*/
-
-//new shi
 const darkModeCookie = document.cookie.split('; ').find(row => row.startsWith('darkMode='));
     if (darkModeCookie) {
         const isDarkMode = darkModeCookie.split('=')[1] === 'true';
-        document.body.style.display = 'block'; // Display the content once the dark mode preference is retrieved
-        document.body.classList.toggle('dark-theme', isDarkMode); // Apply the dark mode
+        document.body.style.display = 'block'; 
+        document.body.classList.toggle('dark-theme', isDarkMode); 
     } else {
-        document.body.style.display = 'block'; // Display content even if the dark mode preference is not found
+        document.body.style.display = 'block';
     }
 
 var darkmode = document.getElementById("darkModeBtn");
@@ -252,9 +227,8 @@ function logout(){
     form.submit().remove()
 }
 
-  // inserting the session information into the modal
+  // inserting the session information into the profile modal
   $(document).ready(function() {
-    // Make an AJAX request to fetch user information
     $.ajax({
       url: '/profile',
       method: 'GET',

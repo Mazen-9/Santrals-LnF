@@ -84,22 +84,18 @@ app.get('/santrals-lf/L&FOfficeUser.html', isAuthenticatedUser, function(request
 });
 
 app.get('/santrals-lf/Itemsfound.html', isAuthenticatedStaff, function(request, response) {
-  console.log(request.session);
 	response.sendFile(path.join(__dirname + '/santrals-lf/Itemsfound.html'));
 });
 
 app.get('/santrals-lf/L&FOfficeStaff.html', isAuthenticatedStaff, function(request, response) {
-  console.log(request.session);
 	response.sendFile(path.join(__dirname + '/santrals-lf/L&FOfficeStaff.html'));
 });
 
 app.get('/santrals-lf/user_chat.html', isAuthenticatedUser, function(request, response) {
-  console.log(request.session);
 	response.sendFile(path.join(__dirname + '/santrals-lf/user_chat.html'));
 });
 
 app.get('/santrals-lf/staff_chat.html', isAuthenticatedStaff, function(request, response) {
-  console.log(request.session);
 	response.sendFile(path.join(__dirname + '/santrals-lf/staff_chat.html'));
 });
 
@@ -360,7 +356,6 @@ app.post('/auth', async function(req, res){
 
       if (insertId) {
         console.log('Record inserted successfully');
-        console.log(req.session);
         res.redirect('/pro.html');
 
       } else {
@@ -375,7 +370,6 @@ app.post('/signin', function(req, res){
   const email = req.body.email;
   const pass = req.body.passhash;
   const loginType = req.body.loginType;
-  console.log('this is the email and password for the login operation: ', email, ', ', pass);
   if (email && pass) {
     pool.query('SELECT * FROM users WHERE email = ?', [email], function(err, results, fields) {
       if(err){
@@ -397,7 +391,6 @@ app.post('/signin', function(req, res){
             req.session.email = results[0].email;  
             req.session.userID = results[0].userID;
             req.session.role = results[0].role;                 
-            console.log('this is the staff session information: ', req.session);     
             res.redirect('/santrals-lf/staff.html');
                   } else {
                       res.send('Incorrect Email and/or Password!');
@@ -410,8 +403,7 @@ app.post('/signin', function(req, res){
             req.session.first_name = results[0].first_name;
             req.session.email = results[0].email; 
             req.session.userID = results[0].userID;
-            req.session.role = results[0].role;    
-            console.log('this is the user session information: ', req.session);
+            req.session.role = results[0].role; 
             res.redirect('/santrals-lf/user.html');
                   } else {
                       res.send('Incorrect Email and/or Password!');
@@ -512,11 +504,8 @@ app.post('/updateStatus', function (req, res) {
 
 
 app.post('/itemreport', upload.single('image'), function(req, res){
-  console.log('Received request:', req.body);
 
   if (req.session.loggedin){
-  console.log('this is the session', req.session);
-  console.log('this is the request: ', req.body);
   const itemName = req.body.itemName || req.body.item_name;
   const category = req.body.category;
   const lastLocation = req.body.lastLocation || req.body.last_loc;
@@ -527,16 +516,16 @@ app.post('/itemreport', upload.single('image'), function(req, res){
 
   if (!itemName || !category || !dateLost || !itemDescription || !lastLocation) {
     console.error('All fields must be filled.');
-    return res.status(400).send('Bad Requestomak');
+    return res.status(400).send('Bad Request');
 }
 
 if(countWords(itemDescription) > 200){
   console.error('Item description must not exceed 200 words.');
-    return res.status(400).send('Bad Requestabook');
+    return res.status(400).send('Bad Request');
 }
 if(countWords(itemName) > 15){
   console.error('Item name must not exceed 15 words.');
-    return res.status(400).send('Bad Requesto5tak');
+    return res.status(400).send('Bad Request');
 }
 
 // date validation
@@ -547,12 +536,12 @@ return res.status(400).send('Date Lost cannot be in the future.');
 }
 
 const max = new Date();
-max.setFullYear(max.getFullYear() - 2);
+max.setFullYear(max.getFullYear() - 3);
 
 const datie = currentDate.getFullYear() - enteredDate.getFullYear();
 
 if (enteredDate < max) {
-  return res.status(400).send(`Date Lost cannot be more than 2 years in the past. \n My guy its been ${datie} years. Come on. MOVE ON`);
+  return res.status(400).send(`Date Lost cannot be more than 3 years in the past. \n My guy its been ${datie} years. Come on. MOVE ON`);
 }
 
 
@@ -578,9 +567,6 @@ if (enteredDate < max) {
     }
 
   });
-  
-  console.log(itemName, category, lastLocation, dateLost, itemDescription);       
-
 } else{ res.send("Session timeout, please login again");}} ) ;
 
 

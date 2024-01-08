@@ -304,10 +304,10 @@ document.getElementById('settingsModal').addEventListener('hide.bs.modal', funct
 const darkModeCookie = document.cookie.split('; ').find(row => row.startsWith('darkMode='));
     if (darkModeCookie) {
         const isDarkMode = darkModeCookie.split('=')[1] === 'true';
-        document.body.style.display = 'block'; // Display the content once the dark mode preference is retrieved
-        document.body.classList.toggle('dark-theme', isDarkMode); // Apply the dark mode
+        document.body.style.display = 'block'; 
+        document.body.classList.toggle('dark-theme', isDarkMode); 
     } else {
-        document.body.style.display = 'block'; // Display content even if the dark mode preference is not found
+        document.body.style.display = 'block'; 
     }
 
 var darkmode = document.getElementById("darkModeBtn");
@@ -328,7 +328,7 @@ function logout(){
     form.submit().remove()
   }
 
-  // inserting the session information into the modal
+  // inserting the session information into the profile modal
   $(document).ready(function() {
     $.ajax({
       url: '/profile',
