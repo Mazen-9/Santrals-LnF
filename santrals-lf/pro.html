@@ -124,39 +124,83 @@
   </div>
 </div>
 
+
+<!-- Modal for generic Error -->
+<div class="modal fade" tabindex="-1" role="dialog" id="errorModal">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content" id="modalerror">
+          <div class="modal-header">
+              <h5 class="modal-title">Error</h5>
+              <button type="button" class="btn-close" id="btx" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <p id="errorModalContent"></p>
+          </div>
+      </div>
+  </div>
+</div>
+</body>
+
+
+
+
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
 integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" 
 crossorigin="anonymous"></script>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  
 <script>
-// THE FOLLOWING CAN BE USED TO SEND A RESPONSE AS A POPUP INSTEAD OF SEND THE USER TO ANOTHER PAGE IN THE (input your info in the correct field error)  
-//   document.addEventListener('DOMContentLoaded', function () {
-//     // Check if there's an error message in the URL parameters
-//     const urlParams = new URLSearchParams(window.location.search);
-//     const errorMessage = urlParams.get('error');
+  
 
-//     if (errorMessage) {
-//         // Display the error message as a popup
-//         alert(errorMessage);
-//     }
-// });
-  var icon = document.getElementById("icon")
-  var logo = document.getElementById("logo")
-  var logo1 = document.getElementById("logo1")
+  const darkModeCookie = document.cookie.split('; ').find(row => row.startsWith('darkMode='));
+if (darkModeCookie) {
+    const isDarkMode = darkModeCookie.split('=')[1] === 'true';
+    document.body.style.display = 'block'; // Display the content once the dark mode preference is retrieved
+    document.body.classList.toggle('dark-theme', isDarkMode); // Apply the dark mode
 
-  icon.onclick=function(){
-    document.body.classList.toggle("dark-theme")
-    if(document.body.classList.contains("dark-theme")){
-      icon.src = "img/sun.png"
-      logo.src = "img/bilgi-logotype-en-light.png"
-      logo1.src = "img/ssmainw.png"
-    }else{
-      
-      icon.src = "img/moon.png"
-      logo.src = "img/bilgibw.png"
-      logo1.src = "img/smain.png"
+    // Set initial icon and logo based on dark mode preference
+    var icon = document.getElementById("icon");
+    var logo = document.getElementById("logo");
+    var logo1 = document.getElementById("logo1");
+    if (isDarkMode) {
+        icon.src = "img/sun.png";
+        logo.src = "img/bilgi-logotype-en-light.png";
+        logo1.src = "img/ssmainw.png";
+    } else {
+        icon.src = "img/moon.png";
+        logo.src = "img/bilgibw.png";
+        logo1.src = "img/smain.png";
     }
-  }
+} else {
+    document.body.style.display = 'block'; // Display content even if the dark mode preference is not found
+}
+
+var icon = document.getElementById("icon");
+if (icon) {
+    icon.onclick = function() {
+        document.body.classList.toggle("dark-theme");
+        const isDarkMode = document.body.classList.contains("dark-theme");
+        setDarkModePreference(isDarkMode);
+
+        // Update icon and logo based on dark mode state
+        var logo = document.getElementById("logo");
+        if (isDarkMode) {
+            icon.src = "img/sun.png";
+            logo.src = "img/bilgi-logotype-en-light.png";
+            logo1.src = "img/ssmainw.png";
+        } else {
+            icon.src = "img/moon.png";
+            logo.src = "img/bilgibw.png";
+            logo1.src = "img/smain.png";
+        }
+    };
+}
+
+function setDarkModePreference(isDarkMode) {
+    document.cookie = `darkMode=${isDarkMode}; expires=Fri, 31 Dec 9999 23:59:59 GMT; path=/`;
+}
+
 
 var bt3 = document.getElementById("bt3");
 bt3.onclick = function() {
@@ -175,30 +219,34 @@ bt3.onclick = function() {
     console.log('Password:', passwordInput1);
 
     if (emailInput.length < 10 || emailInput.length > 320) {
-        alert('Email should be between 10 and 320 characters');
-        
-        return; // Prevent navigating to different page
+      document.getElementById('errorModalContent').innerText = 'Email should be between 10 and 320 characters';
+                $('#errorModal').modal('show');
+                event.preventDefault();
+                return;
     }
 
     // Validate first and last name
     if (firstNameInput.length > 60 || lastNameInput.length > 60 || lastNameInput.length < 1 || firstNameInput.length<1) {
-        alert('First and last names should be less than or equal to 60 characters');
-        
-        return; // Prevent navigating to different page
+      document.getElementById('errorModalContent').innerText = 'first and last name should be at most 60 characters';
+      $('#errorModal').modal('show');
+                event.preventDefault();
+                return;
     }
 
     // Validate phone numbers
     if (phoneNumberInput.length != 10) {
-        alert('Phone number should equal 10 characters');
-        
-        return; // Prevent navigating to different page
+      document.getElementById('errorModalContent').innerText = 'phone number should be 10 characters';
+      $('#errorModal').modal('show');
+                event.preventDefault();
+                return;
     }
 
     // Validate passwords
     if (passwordInput1 !== passwordInput2 || passwordInput1.length < 8 || passwordInput1.length > 300) {
-        alert('Passwords should be equal and between 8 and 300 characters');
-       
-        return; // Prevent navigating to different page
+      document.getElementById('errorModalContent').innerText = 'Passwords should be equal and between 8 and 300 characters';
+      $('#errorModal').modal('show');
+                event.preventDefault();
+                return;
     }
         localStorage.setItem('userEmail', emailInput);
         localStorage.setItem('userFirstName', firstNameInput);
@@ -206,36 +254,42 @@ bt3.onclick = function() {
         localStorage.setItem('userPhoneNumber', phoneNumberInput);
         localStorage.setItem('userPassword', passwordInput1);
     // If all validations pass, navigate to the different page
-    window.location.href = 'pro.html';
+   
 
     // For debugging, check if the click event is triggered
     console.log('Button clicked!');
+
     document.getElementById("myForm").submit();
 
 };
+
+
 var bt1 = document.getElementById("bt1");
-bt1.onclick=function(){
-   let emailInput = document.getElementById('floatingInput').value.trim();
-   let passwordInput= document.getElementById('floatingPassword').value.trim();
+    bt1.onclick=function(){
+   let emailInput = document.getElementById('email').value.trim();
+   let passwordInput= document.getElementById('passhash').value.trim();
 
    console.log('Email:', emailInput);
    console.log('Password:', passwordInput);
 
    if (emailInput.length < 10 || emailInput.length > 320) {
-        alert('Email should be between 10 and 320 characters');
-        
-        return; 
+      document.getElementById('errorModalContent').innerText = 'Email should be between 10 and 320 characters';
+                $('#errorModal').modal('show');
+                event.preventDefault();
+                return;
     }
 
-   if (passwordInput.length < 8 || passwordInput.length > 300) {
-        alert('Passwords should be equal and between 8 and 300 characters');
-       
-        return; 
-    }
-
-    window.location.href = 'user.html';
-
+            if (passwordInput.length < 8 || passwordInput.length > 300) {
+                document.getElementById('errorModalContent').innerText = 'Passwords should be equal and between 8 and 300 characters';
+                $('#errorModal').modal('show');
+                event.preventDefault();
+                return;
+            }
+   
     console.log('Button clicked!');
+
+    
+
 
 };
 

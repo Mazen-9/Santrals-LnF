@@ -1,6 +1,7 @@
 body{
     background-color:var(--secondary-color);
     transition: background-color var(--transition-speed);
+    display: none;
    
 }
 
@@ -88,6 +89,11 @@ footer{
     
 }
 
+#modalerror{
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+}
+
 #btx{
     background-color:  rgb(208, 0, 0);
     border-radius: 50%;
@@ -139,21 +145,17 @@ footer{
     }
    
    
-    #bt1{
+    .custom-btn{
         
      width:300px;
      margin-left: 0px;
-        }
+    }
     
-   #floatingInput{
-       
-        width:300px;
-     }
-    
-    #floatingPassword{
-       margin-right: 50px;
-        width:300px;
-        }
+   
+
+    .custom-label{
+            width: 300px;
+    }
 
     #logo{
         height: 80px;
@@ -181,29 +183,17 @@ footer{
     }
    
    
-    #bt1{
+    .custom-btn{
         
         width:300px;
         margin-left: 0px;
-        
-        
-
-    }
-    #floatingInput{
+       }
        
-        width:300px;
-        
-       
-        
-    }
-    #floatingPassword{
-       margin-right: 50px;
-        width:300px;
-        
-        
-        
-       
-    }
+      
+   
+       .custom-label{
+               width: 300px;
+       }
     #logo{
         height: 80px;
         width: 130px;
