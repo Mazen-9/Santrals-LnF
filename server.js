@@ -28,7 +28,7 @@ app.use(session({
     }
 }));
 
-
+// redirection to the login page if the session is expired
 app.use((req, res, next) => {
 
   res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
@@ -47,47 +47,6 @@ app.use((req, res, next) => {
   }
 });
 
-
-app.get('/profile', function (req, res) {
-  // Assuming you have user information stored in the session
-  const userFirstName = req.session.first_name || '';
-  const userID = req.session.userID || '';
-
-  // Send user information as JSON
-  res.json({ userFirstName, userID });
-});
-
-
-// checks authentication before redirecting
-function isAuthenticatedStaff(req, res, next) {
-  if (req.session && req.session.loggedin === true && req.session.role === 'Staff') {
-    return next();
-  }
-  req.session.destroy(function(err) {
-    if(err) {
-    console.error('Error destroying session:', err);
-    res.status(500).send('Internal Server Error');
-  } else {
-    console.log('logging out...', req.session);
-    res.redirect('/pro.html');
-  }
-});
-}
-
-function isAuthenticatedUser(req, res, next) {
-  if (req.session && req.session.loggedin === true && req.session.role === 'User') {
-    return next();
-  }
-  req.session.destroy(function(err) {
-    if(err) {
-    console.error('Error destroying session:', err);
-    res.status(500).send('Internal Server Error');
-  } else {
-    console.log('logging out...', req.session);
-    res.redirect('/pro.html');
-  }
-});
-}
 
 
 // get methods
@@ -148,33 +107,39 @@ app.get('/santrals-lf/staff_chat.html', isAuthenticatedStaff, function(request, 
 app.get('/img/bilgi-logotype-en-light.png', function(_, res) {
   res.sendFile(path.join(__dirname + '/santrals-lf/img/bilgi-logotype-en-light.png'));
 });
+
 app.get('/santrals-lf/img/bilgi-logotype-en-light.png', function(_, res) {
   res.sendFile(path.join(__dirname + '/santrals-lf/img/bilgi-logotype-en-light.png'));
 });
+
 app.get('/img/moon.png', function(_, res) {
   res.sendFile(path.join(__dirname + '/santrals-lf/img/moon.png'));
 });
+
 app.get('/img/sun.png', function(_, res) {
   res.sendFile(path.join(__dirname + '/santrals-lf/img/sun.png'));
 });
+
 app.get('/img/bilgibw.png', function(_, res) {
   res.sendFile(path.join(__dirname + '/santrals-lf/img/bilgibw.png'));
 });
-// app.get('/img/bilgilogo1.png', function(_, res) {
-//   res.sendFile(path.join(__dirname + '/santrals-lf/img/bilgilogo1.png'));
-// });
+
 app.get('/img/bilgilloo.png', function(_, res) {
   res.sendFile(path.join(__dirname + '/santrals-lf/img/bilgilloo.png'));
 });
+
 app.get('/santrals-lf/img/Profile.png', function(_, res) {
   res.sendFile(path.join(__dirname + '/santrals-lf/img/Profile.png'));
 });
+
 app.get('/img/smain.png', function(_, res) {
   res.sendFile(path.join(__dirname + '/santrals-lf/img/smain.png'));
 });
+
 app.get('/img/ssmainw.png', function(_, res) {
   res.sendFile(path.join(__dirname + '/santrals-lf/img/ssmainw.png'));
 });
+
 app.get('/santrals-lf/img/campusmap.jpg', function(_, res) {
   res.sendFile(path.join(__dirname + '/santrals-lf/img/campusmap.jpg'));
 });
@@ -183,6 +148,7 @@ app.get('/santrals-lf/img/campusmap.jpg', function(_, res) {
 app.get('/santrals-lf/style.css', function(_, res) {
   res.sendFile(path.join(__dirname + '/santrals-lf/style.css'));
 });
+
 app.get('/style1.css', function(_, res) {
   res.sendFile(path.join(__dirname + '/santrals-lf/style1.css'));
 });
@@ -191,23 +157,33 @@ app.get('/style1.css', function(_, res) {
 app.get('/santrals-lf/user.js', function(_, res) {
   res.sendFile(path.join(__dirname + '/santrals-lf/user.js'));
 });
+
 app.get('/santrals-lf/myrequests.js', function(_, res) {
   res.sendFile(path.join(__dirname + '/santrals-lf/myrequests.js'));
 });
+
 app.get('/santrals-lf/Itemsfound.js', function(_, res) {
   res.sendFile(path.join(__dirname + '/santrals-lf/Itemsfound.js'));
 });
+
 app.get('/santrals-lf/staff.js', function(_, res) {
   res.sendFile(path.join(__dirname + '/santrals-lf/staff.js'));
 });
 
+
 // more get operations
-app.get('/staff.html', function(request, response) {
-  //added item desc and userid heeereyah
-  pool.query('SELECT user_id, itemID, item_name, category, date_lost, item_status, item_description, last_loc, image_path, date_added FROM items', function(error, results, fields) {
+
+app.get('/profile', function (req, res) {
+  const userFirstName = req.session.first_name || '';
+  const userID = req.session.userID || '';
+  res.json({ userFirstName, userID });
+});
+
+app.get('/staff.html', function(req, res) {
+  pool.query('SELECT user_id, itemID, item_name, category, date_lost, item_status, item_description, last_loc, image_path, date_added FROM items', function(error, results) {
           if (error) {
               console.error('Error fetching missing items:', error);
-              return response.status(500).send('Internal Server Error');
+              return res.status(500).send('Internal Server Error');
           }            
           const items = results
           .filter(resultx => resultx.item_status === 'Lost')
@@ -223,13 +199,13 @@ app.get('/staff.html', function(request, response) {
             date_added: result.date_added,
             image_path: result.image_path ? `/${result.image_path}` : '' 
         }));
-        response.json(items);
+        res.json(items);
       });
 
 }); 
 
 app.get('/user.html', function(req, res) {
-  pool.query('SELECT user_id, itemID, item_name, category, date_lost, item_status, item_description, last_loc, image_path FROM items', function(error, results, fields) {
+  pool.query('SELECT user_id, itemID, item_name, category, date_lost, item_status, item_description, last_loc, image_path FROM items', function(error, results) {
           if (error) {
               console.error('Error fetching missing items: ', error);
               return res.status(500).send('Internal Server Error');
@@ -250,16 +226,16 @@ app.get('/user.html', function(req, res) {
 
 });
 
-app.get('/myrequests.html', function(request, response) {
+app.get('/myrequests.html', function(req, res) {
         
-  pool.query('SELECT * FROM items', function(error, results, fields) {
+  pool.query('SELECT * FROM items', function(error, results) {
           if (error) {
               console.error('Error fetching missing items:', error);
-              return response.status(500).send('Internal Server Error');
+              return res.status(500).send('Internal Server Error');
           } 
 
           const items = results
-          .filter(resultx => request.session.userID === resultx.user_id)
+          .filter(resultx => req.session.userID === resultx.user_id)
           .map(result => ({
             itemID: result.itemID,
             item_name: result.item_name,
@@ -275,18 +251,18 @@ app.get('/myrequests.html', function(request, response) {
             found_loc: result.found_loc
           }));
         
-        response.json(items);
+        res.json(items);
           
       });
 
 });   
 
-app.get('/itemsfound.html', function(request, response) {
+app.get('/itemsfound.html', function(req, res) {
   
-  pool.query('SELECT user_id, itemID, item_name, category, date_lost, item_status, item_description, last_loc, image_path, date_added FROM items', function(error, results, fields) {
+  pool.query('SELECT user_id, itemID, item_name, category, date_lost, item_status, item_description, last_loc, image_path, date_added FROM items', function(error, results) {
           if (error) {
               console.error('Error fetching missing items:', error);
-              return response.status(500).send('Internal Server Error');
+              return res.status(500).send('Internal Server Error');
           }            
           const items = results
           .filter(resultx => resultx.item_status === 'Found')
@@ -301,13 +277,12 @@ app.get('/itemsfound.html', function(request, response) {
             image_path: result.image_path ? `/${result.image_path}` : '',
             date_added: result.date_added
         }));
-        response.json(items);
+        res.json(items);
       });
 
 }); 
 
 
-/////////////////////////////////////////////////////////////////////
 
 // post methods
 
@@ -320,8 +295,7 @@ app.post('/auth', async function(req, res){
   const pass = req.body.pass;
   const pass_ver = req.body.pass_ver;
 
-  // change the following to await if you figured out how to use it
-  // const isValid = await validator.validate(email);
+
   const isValid = validator.validate(email);
   
   const phoneRegex = /^\d{10}$/;
@@ -411,13 +385,11 @@ app.post('/signin', function(req, res){
                 
         const storedPassHash = results[0].passhash;
 
-        // this is synchronous blocking method which affects concurrent operations...
-        // but tbh i don't feel like understanding async funcitons and promises so there's that
         const passwordMatch = bcrypt.compareSync(pass, storedPassHash);
 
         const role = results[0].role;
 
-        // this should check if the input field is coming from the user login or the staff login before password validation       
+        // checks if the input field is coming from the user login or the staff login before validating password
         if(loginType === 'staff' && role === 'Staff'){
           if(passwordMatch){
             req.session.loggedin = true;
@@ -446,9 +418,6 @@ app.post('/signin', function(req, res){
                   }
         } else{
           res.send('Please input your information in the correct fields');
-          // this can be used with the commented code in the beginning of the script in pro.html to display the error as a popup
-          //res.redirect('/pro.html?error=Please+input+your+information+in+the+correct+fields');
-
         }
                     
       } else {
@@ -461,77 +430,6 @@ app.post('/signin', function(req, res){
     res.end();
   }
 });
-
-// inserting items into a database
-/*
-app.post('/itemreport', upload.single('image'), function(req, res){
-  // make sure the session timeout is used everywhere 
-  console.log('this is the session for item report: ', req.session);
-  if (req.session.loggedin /*&& req.session.role === 'User' for now ill leave this here for as long as its logged in it works){
-  const itemName = req.body.itemName;
-  const category = req.body.category;
-  const lastLocation = req.body.lastLocation;
-  const dateLost =  req.body.dateLost;
-  const itemDescription = req.body.itemDescription;
-  //const imagePath = req.file.path;
-  const imagePath = req.file ? req.file.path : null;
-
-if (!itemName || !category || !dateLost || !itemDescription || !lastLocation) {
-    console.error('All fields must be filled.');
-    return res.status(400).send('Bad Request');
-}
-if(countWords(itemDescription) > 200){
-  console.error('Item description must not exceed 200 words.');
-    return res.status(400).send('Bad Request');
-}
-if(countWords(itemName) > 15){
-  console.error('Item name must not exceed 15 words.');
-    return res.status(400).send('Bad Request');
-}
-
-// date validation
-const currentDate = new Date();
-const enteredDate = new Date(dateLost);
-if (enteredDate > currentDate) {
-return res.status(400).send('Date Lost cannot be in the future.');
-}
-
-const max = new Date();
-max.setFullYear(max.getFullYear() - 2);
-const datie = currentDate.getFullYear() - enteredDate.getFullYear();
-
-if (enteredDate < max) {
-  return res.status(400).send(`Date Lost cannot be more than 2 years in the past. \n My guy its been ${datie} years. Come on. MOVE ON`);
-}
-
-console.log('this is the session email for item report: ', req.session.email, ' and this is the userid: ', req.session.userID);
-
-  const sql = `INSERT INTO items (user_id, item_name, category, item_description, date_lost, image_path, item_status, last_loc) VALUES (?,?,?,?,?,?,?,?);`
-  pool.query(sql, [req.session.userID, itemName, category, itemDescription, dateLost, imagePath, 'Lost', lastLocation], function(err, results){
-
-    if(err){
-      console.error('Error inserting record:', err);
-      return res.status(500).send('Internal Server Error');
-    }
-
-    const insertId = results && results.insertId;
-
-    if (insertId) {
-        console.log('Record inserted successfully: ', itemName, category, lastLocation, dateLost, itemDescription);
-        // i don't think redirection is recommended here but this is temporary
-        // double check this
-        if(req.session.role === 'User'){
-          res.redirect('/santrals-lf/user.html');
-        }
-        else res.redirect('/santrals-lf/staff.html');
-
-    } else {
-        console.error('Error inserting record. No rows affected.');
-        res.status(500).send('Internal Server Error');
-    }
-
-  });} else { res.send("session timeout please login again");}} ) ;
-*/
 
 // logout
 app.post('/logout', function(req, res){
@@ -566,6 +464,7 @@ app.post('/editItem', function (req, res) {
   );
 });
 
+
 app.post('/deleteItem', function (req, res) {
 
   const itemId = req.body.itemID;
@@ -575,13 +474,14 @@ app.post('/deleteItem', function (req, res) {
       if (error) {
           console.error('Error deleting item:', error);
       } else {
-          console.log('Item deleted!'); //should probably add smth to check if item no longer exists
+          console.log('Item deleted!');
       }
   });
   } else {
       res.status(400).send('Error mate');
   }
 });
+
 
 app.post('/updateStatus', function (req, res) {
   try {
@@ -601,7 +501,6 @@ app.post('/updateStatus', function (req, res) {
                   return res.status(404).json({ error: 'Item not found' });
               }
 
-              // Send a success response
               res.status(200).json({ message: 'Status updated successfully' });
           }
       );
@@ -610,6 +509,7 @@ app.post('/updateStatus', function (req, res) {
       res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 app.post('/itemreport', upload.single('image'), function(req, res){
   console.log('Received request:', req.body);
@@ -622,7 +522,6 @@ app.post('/itemreport', upload.single('image'), function(req, res){
   const lastLocation = req.body.lastLocation || req.body.last_loc;
   const dateLost =  req.body.dateLost || req.body.date_lost;
   const itemDescription = req.body.itemDescription || req.body.item_description;
-  //const imagePath = req.file.path;
   const imagePath = req.file ? req.file.path : null;
   const date_added = req.body.date_added;
 
@@ -656,7 +555,7 @@ if (enteredDate < max) {
   return res.status(400).send(`Date Lost cannot be more than 2 years in the past. \n My guy its been ${datie} years. Come on. MOVE ON`);
 }
 
-// i did it like this instead of querying the db again
+
   const sql = `INSERT INTO items (user_id, item_name, category, item_description, date_lost, image_path, item_status, last_loc, date_added) VALUES (?,?,?,?,?,?,?,?,?);`
   pool.query(sql, [req.session.userID, itemName, category, itemDescription, dateLost, imagePath, 'Lost', lastLocation, date_added], function(err, results){
 
@@ -669,7 +568,6 @@ if (enteredDate < max) {
 
     if (insertId) {
         console.log('Record inserted successfully');
-        // i don't think redirection is recommended here but this is temporary
         if(req.session.role ==='User'){
           res.redirect('/santrals-lf/user.html');
         } else res.redirect('/santrals-lf/staff.html');
@@ -685,11 +583,43 @@ if (enteredDate < max) {
 
 } else{ res.send("Session timeout, please login again");}} ) ;
 
- // functions
+
+// functions
  function countWords(text) {
   const words = text.trim().split(/\s+/);
   return words.length;
-}     
+}
+
+// checks authentication before redirecting
+function isAuthenticatedStaff(req, res, next) {
+  if (req.session && req.session.loggedin === true && req.session.role === 'Staff') {
+    return next();
+  }
+  req.session.destroy(function(err) {
+    if(err) {
+    console.error('Error destroying session:', err);
+    res.status(500).send('Internal Server Error');
+  } else {
+    console.log('logging out...', req.session);
+    res.redirect('/pro.html');
+  }
+});
+}
+
+function isAuthenticatedUser(req, res, next) {
+  if (req.session && req.session.loggedin === true && req.session.role === 'User') {
+    return next();
+  }
+  req.session.destroy(function(err) {
+    if(err) {
+    console.error('Error destroying session:', err);
+    res.status(500).send('Internal Server Error');
+  } else {
+    console.log('logging out...', req.session);
+    res.redirect('/pro.html');
+  }
+});
+}
 
 
 app.listen(port, () => {
