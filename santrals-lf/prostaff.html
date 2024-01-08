@@ -126,35 +126,21 @@ body{
         </div>
      </div>
 
-     <div class="modal fade" tabindex="-1" role="dialog" id="emailModal">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Email Error</h5>
-                    <button type="button" class="btn-close" id="btx" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p id="emailModalContent"></p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal for Password Error -->
-    <div class="modal fade" tabindex="-1" role="dialog" id="passwordModal">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Password Error</h5>
-                    <button type="button" class="btn-close" id="btx" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <p id="passwordModalContent"></p>
+        <!-- Modal for generic Error -->
+        <div class="modal fade" tabindex="-1" role="dialog" id="errorModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content" id="modalerror">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Error</h5>
+                        <button type="button" class="btn-close" id="btx" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="errorModalContent"></p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-     
+        
 </body>
 
 
@@ -215,15 +201,15 @@ function setDarkModePreference(isDarkMode) {
    console.log('Password:', passwordInput);
 
    if (emailInput.length < 10 || emailInput.length > 320) {
-                document.getElementById('emailModalContent').innerText = 'Email should be between 10 and 320 characters';
-                $('#emailModal').modal('show');
+                document.getElementById('errorModalContent').innerText = 'Email should be between 10 and 320 characters';
+                $('#errorModal').modal('show');
                 event.preventDefault();
                 return;
             }
 
             if (passwordInput.length < 8 || passwordInput.length > 300) {
-                document.getElementById('passwordModalContent').innerText = 'Passwords should be equal and between 8 and 300 characters';
-                $('#passwordModal').modal('show');
+                document.getElementById('errorModalContent').innerText = 'Passwords should be equal and between 8 and 300 characters';
+                $('#errorModal').modal('show');
                 event.preventDefault();
                 return;
             }
