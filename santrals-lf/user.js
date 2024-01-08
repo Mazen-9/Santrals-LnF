@@ -1,3 +1,4 @@
+// display items on the user homepage
 async function displayItems() {
   
     try {
@@ -43,9 +44,7 @@ async function displayItems() {
             </button>
    
       
-        </div>
-        
-    `;
+        </div>`;
             
                 newItem.dateLost = new Date(dateLost);
                 newItem.dateFound = currentDate;
@@ -54,15 +53,15 @@ async function displayItems() {
             
         });
   
-            
         } else {
-            console.error('Error fetching item details:', response.statusText);
-            
+            console.error('Error fetching item details:', response.statusText);          
         }
+
     } catch (error) {
         console.error('Error fetching item details:', error.message);
     }
   }  
+
 
 document.addEventListener("DOMContentLoaded", function () {
     displayItems();
@@ -76,9 +75,7 @@ document.addEventListener("DOMContentLoaded", function () {
         keyboard: false,
     });
 
-    // Open the chat modal when the chat icon is clicked
-    document.getElementById('openChatModal').addEventListener('click', function () {
-        // Assuming you're using Bootstrap for modals
+document.getElementById('openChatModal').addEventListener('click', function () {
         var chatModal = new bootstrap.Modal(document.getElementById('chatModal'), {
             backdrop: 'static',
             keyboard: false,
@@ -89,10 +86,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var requestList = document.getElementById('requestList');
     var sortByDateLost = document.getElementById('sortByDateLost');
     var sortByDateFound = document.getElementById('sortByDateFound');
-
-    var imageUrl;
     var originalItemList = Array.from(requestList.children);
-    var currentItemList = Array.from(requestList.children);
 
     function renderRequestList(items) {
         requestList.innerHTML = "";
@@ -101,7 +95,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    document.getElementById('addRequestBtn').addEventListener('click', function () {
+document.getElementById('addRequestBtn').addEventListener('click', function () {
         addRequestModal.show();
     });
 
@@ -113,27 +107,25 @@ document.addEventListener("DOMContentLoaded", function () {
         sortItems('dateTimeAdded');
     });
 
-    document.getElementById('itemName').addEventListener('keydown', function (event) {
+document.getElementById('itemName').addEventListener('keydown', function (event) {
         handleEnterKeyPress(event, 'category');
     });
 
-    document.getElementById('category').addEventListener('keydown', function (event) {
+document.getElementById('category').addEventListener('keydown', function (event) {
         handleEnterKeyPress(event, 'lastLocation');
     });
 
-    document.getElementById('lastLocation').addEventListener('keydown', function (event) {
+document.getElementById('lastLocation').addEventListener('keydown', function (event) {
         handleEnterKeyPress(event, 'dateLost');
     });
 
-    document.getElementById('dateLost').addEventListener('keydown', function (event) {
+document.getElementById('dateLost').addEventListener('keydown', function (event) {
         handleEnterKeyPress(event, 'itemDescription');
     });
 
     requestList.addEventListener('click', function (event) {
         if (event.target.classList.contains('view-details-btn')) {
             const itemId = event.target.dataset.itemId;
-            const itemName = event.target.dataset.itemName;
-            const category = event.target.dataset.category;
             const dateLost = event.target.dataset.dateLost;
             const itemDescription = event.target.dataset.itemDescription;
             const lastLocation = event.target.dataset.lastLocation;
@@ -152,15 +144,16 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    document.getElementById('searchBtn').addEventListener('click', function () {
+document.getElementById('searchBtn').addEventListener('click', function () {
         performSearch();
     });
 
-    document.getElementById('searchInput').addEventListener('keydown', function (event) {
+document.getElementById('searchInput').addEventListener('keydown', function (event) {
         if (event.key === 'Enter') {
             performSearch();
         }
     });
+
     var sortedItemList = [];
 
     function performSearch() {
@@ -175,9 +168,7 @@ document.addEventListener("DOMContentLoaded", function () {
             );
             renderRequestList(filteredItems);
             sortedItemList = filteredItems.slice();
-        }
-
-       
+        }       
         console.log('searched');
     }
 
@@ -247,12 +238,6 @@ document.addEventListener("DOMContentLoaded", function () {
         let finalPassword = localStorage.getItem('userPassword');
 
 
-
-        // if (newEmail.length < 10 || newEmail.length > 320) {
-        //     alert('Email should be between 10 and 320 characters');
-        //     return;
-        // }
-
         // Validate phone numbers
         if (newPhoneNumber.length !== 10) {
             alert('Phone number should be 10 characters');
@@ -269,7 +254,6 @@ document.addEventListener("DOMContentLoaded", function () {
             finalPassword = newPassword;
         }
 
-        // Ask for confirmation
         const isConfirmed = confirm('Are you sure you want to save the changes?');
 
         if (isConfirmed) {
@@ -277,8 +261,6 @@ document.addEventListener("DOMContentLoaded", function () {
             localStorage.setItem('userEmail', newEmail);
             localStorage.setItem('userPhoneNumber', newPhoneNumber);
             localStorage.setItem('userPassword', finalPassword);
-
-            // Optionally, show a success message or perform other actions after saving changes
 
             // Close the settings modal
             const modalElement = document.getElementById('settingsModal');
@@ -296,7 +278,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    document.getElementById('settingsModal').addEventListener('hidden.bs.modal', function () {
+document.getElementById('settingsModal').addEventListener('hidden.bs.modal', function () {
         const newPasswordField = document.getElementById('settingsPassword');
         const confirmPasswordField = document.getElementById('settingsConfirmPassword');
 
@@ -304,7 +286,7 @@ document.addEventListener("DOMContentLoaded", function () {
         confirmPasswordField.value = '';
     });
 
-    document.getElementById('settingsModal').addEventListener('hide.bs.modal', function () {
+document.getElementById('settingsModal').addEventListener('hide.bs.modal', function () {
         document.getElementById('settingsEmail').value = storedEmail || '';
         document.getElementById('settingsFirstName').value = storedFirstName || '';
         document.getElementById('settingsLastName').value = storedLastName || '';
@@ -316,20 +298,8 @@ document.addEventListener("DOMContentLoaded", function () {
         confirmPasswordField.value = '';
     });
 
-    // Display retrieved first name and last name in the modal
-    document.getElementById('userFirstName').textContent = storedFirstName || 'First Name';
-    document.getElementById('userLastName').textContent = storedLastName || 'Last Name';
 });
-/*
-var darkmode = document.getElementById("darkModeBtn");
-if (darkmode) {
-    darkmode.onclick = function () {
-        document.body.classList.toggle("dark-theme");
-    };
-}
-*/
 
-//added shi
 
 const darkModeCookie = document.cookie.split('; ').find(row => row.startsWith('darkMode='));
     if (darkModeCookie) {
@@ -360,13 +330,11 @@ function logout(){
 
   // inserting the session information into the modal
   $(document).ready(function() {
-    // Make an AJAX request to fetch user information
     $.ajax({
       url: '/profile',
       method: 'GET',
       dataType: 'json',
       success: function(data) {
-        // Update the content of the modal with the fetched user information
         $('#userFirstName').text(data.userFirstName);
         $('#userID').text(data.userID);
       },
